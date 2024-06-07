@@ -1,7 +1,7 @@
 | Supported Targets | ESP32 | ESP32-C2 | ESP32-C3 | ESP32-C6 | ESP32-H2 | ESP32-S2 | ESP32-S3 |
 | ----------------- | ----- | -------- | -------- | -------- | -------- | -------- | -------- |
 
-# _Trabajo Práctico:Sistemas Operativos en Tiempo Real_
+# _Trabajo Práctico: Sistemas Operativos en Tiempo Real_
 
 Este proyecto corresponde al trabajo final de la materia "Arquitecturas Embebidas y Procesamiento en Tiempo Real" perteneciente al posgrado Sistemas Embebidos que dicta el Instituto Universitario Aeronáutico de la ciudad de Córdoba.
 El objetivo fundamental de este trabajo práctico es poder aplicar los conecimientos adquiridos a lo largo de la materia, para lo cual, en mi caso, tomo como ejemplo de aplicación el control de algunas variables de un invernadero a traves de sensores y actuadores, ademas las mediciones hechas por los sensores se exponen en una pagina web. En otras palabras se busca hacer una aplicación concreta de lo que se conoce cmo IoT (Internet de la Cosas).
