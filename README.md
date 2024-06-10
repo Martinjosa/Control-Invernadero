@@ -88,3 +88,7 @@ El proyecto depende de varias bibliotecas y componentes:
 - **lwIP**: Implementación ligera de la pila TCP/IP, utilizada para la comunicación de red.
 - **DHT Library**: Biblioteca específica para sensores de temperatura y humedad, facilitando la adquisición de datos.
 - **MQTT Library**: Biblioteca para la implementación del protocolo MQTT, facilitando la comunicación de datos con el servidor remoto.
+
+
+![PINOUT_ESP32_V3](https://github.com/Martinjosa/Control-Invernadero/assets/91288096/24b1d0f1-0fab-4805-a832-23c58bca6684)
+
