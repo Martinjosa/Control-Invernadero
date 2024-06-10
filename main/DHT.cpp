@@ -55,8 +55,8 @@ int DHT::readDHT() {
 
     gpio_set_direction(DHTgpio, GPIO_MODE_OUTPUT);
     gpio_set_level(DHTgpio, 0);
-    vTaskDelay(pdMS_TO_TICKS(20));
-    //vTaskDelay(20 / portTICK_PERIOD_MS);
+    //vTaskDelay(pdMS_TO_TICKS(20));
+    vTaskDelay(20 / portTICK_PERIOD_MS);
     gpio_set_level(DHTgpio, 1);
     esp_rom_delay_us(40);
     gpio_set_direction(DHTgpio, GPIO_MODE_INPUT);
