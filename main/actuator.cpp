@@ -1,8 +1,8 @@
 
 #include "actuator.h"
 #include "config.h"
-//#include "esp_log.h"
 #include "processing.h"
+#include "esp_task_wdt.h"
 
 extern QueueHandle_t processedDataQueue;
 extern SemaphoreHandle_t actuatorSemaphore;
@@ -47,6 +47,8 @@ void turn_off_irrigation()
 void actuator_task(void *pvParameters)
 {
     SensorData_t sensorData;
+    ESP_ERROR_CHECK(esp_task_wdt_add(NULL));
+
     while (1)
     {
         // Recibir datos procesados
@@ -87,6 +89,8 @@ void actuator_task(void *pvParameters)
 
                 // Liberar el semáforo del actuador
                 xSemaphoreGive(actuatorSemaphore);
+
+                ESP_ERROR_CHECK(esp_task_wdt_reset());
             }
         }
     }

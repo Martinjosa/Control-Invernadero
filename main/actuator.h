@@ -6,14 +6,6 @@
 #include "freertos/queue.h"
 #include "freertos/semphr.h"
 
-/*typedef struct
-{
-   float temperature;
-   float humidity;
-   float luminosity;
-   float soil_moisture;
-} SensorData_t;
-*/
 void actuator_task(void *pvParameters);
 void turn_on_fan();
 void turn_off_fan();

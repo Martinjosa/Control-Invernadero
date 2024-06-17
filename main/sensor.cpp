@@ -2,6 +2,7 @@
 #include "config.h"
 #include "DHT.h"
 #include "processing.h"
+#include "esp_task_wdt.h"
 
 extern QueueHandle_t sensorQueue;
 extern SemaphoreHandle_t i2cSemaphore;
@@ -22,6 +23,8 @@ float read_soil_moisture()
 void sensor_task(void *pvParameters)
 {
     SensorData_t sensorData;
+    ESP_ERROR_CHECK(esp_task_wdt_add(NULL));
+
     while (1)
     {
         if (xSemaphoreTake(i2cSemaphore, portMAX_DELAY) == pdTRUE)
@@ -48,6 +51,7 @@ void sensor_task(void *pvParameters)
             xQueueSend(sensorQueue, &sensorData, portMAX_DELAY);
         }
 
-        vTaskDelay(pdMS_TO_TICKS(1000));
+        vTaskDelay(pdMS_TO_TICKS(2000));
+        ESP_ERROR_CHECK(esp_task_wdt_reset()); // Reset WDT
     }
 }

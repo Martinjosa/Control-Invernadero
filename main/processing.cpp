@@ -1,5 +1,6 @@
 #include "processing.h"
 #include "config.h"
+#include "esp_task_wdt.h"
 
 extern QueueHandle_t sensorQueue;
 extern QueueHandle_t processedDataQueue;
@@ -40,10 +41,10 @@ void process_sensor_data(SensorData_t *data)
     }
 }
 
-
 void processing_task(void *pvParameters)
 {
     SensorData_t sensorData;
+    ESP_ERROR_CHECK(esp_task_wdt_add(NULL));
     while (1)
     {
         if (xQueueReceive(sensorQueue, &sensorData, portMAX_DELAY))
@@ -52,7 +53,9 @@ void processing_task(void *pvParameters)
 
             xQueueSend(processedDataQueue, &sensorData, portMAX_DELAY);
 
-            //send_to_cloud(&sensorData);
+            // send_to_cloud(&sensorData);
+
+            ESP_ERROR_CHECK(esp_task_wdt_reset());
         }
     }
 }
