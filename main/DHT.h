@@ -1,9 +1,3 @@
-/* DHT library
-
-
-*/
-
-
 #ifndef DHT_H
 #define DHT_H
 
@@ -14,7 +8,8 @@
 #define DHT_CHECKSUM_ERROR -1
 #define DHT_TIMEOUT_ERROR -2
 
-class DHT {
+class DHT
+{
 public:
     DHT();
     void setDHTgpio(gpio_num_t gpio);
