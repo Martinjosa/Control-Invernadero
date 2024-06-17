@@ -95,7 +95,8 @@ El proyecto depende de varias bibliotecas y componentes:
 - **DHT Library**: Biblioteca específica para sensores de temperatura y humedad, facilitando la adquisición de datos.
 - **MQTT Library**: Biblioteca para la implementación del protocolo MQTT, facilitando la comunicación de datos con el servidor remoto.
 
-![Captura desde 2024-06-17 13-05-56](https://github.com/Martinjosa/Control-Invernadero/assets/91288096/0d04c9a9-f118-41b5-9c03-651538fe3776)
+![Captura desde 2024-06-17 13-46-29](https://github.com/Martinjosa/Control-Invernadero/assets/91288096/20a757f0-12eb-48f7-88af-c6efc7601c98)
+
 
 ![PINOUT_ESP32_V3](https://github.com/Martinjosa/Control-Invernadero/assets/91288096/24b1d0f1-0fab-4805-a832-23c58bca6684)
 
