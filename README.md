@@ -1,18 +1,18 @@
-# Monitoreo y Control de un Vivero/Invernadero con ESP32
+# Monitoreo y Control de un Vivero/Invernadero con ESP32 Y FreeRTOS
 
 ## Descripción General
-Este proyecto consiste en la monitorización y control automático de un vivero utilizando un [ESP32-S3](https://docs.espressif.com/projects/esp-idf/en/latest/esp32s3/get-started/index.html) . El sistema adquiere datos de diversos sensores (como temperatura y humedad, luminocidad y humedad del suelo), los procesa y los envía a la nube mediante el protocolo MQTT para ser expuestos. En este caso he utilizado la plataforma [Blynk](https://blynk.io/) para graficar estos datos, proporcionando una visualización en tiempo real de las métricas como asì también un historial. Ademas con los datos procesados el sistema toma deciciones sobre actuadores (como luminaria, ventiladores o motores) para poder mantener las metricas dentro de los umbrales definidos. 
+Este proyecto consiste en la monitorización y control automático de un vivero utilizando un [ESP32-S3](https://docs.espressif.com/projects/esp-idf/en/latest/esp32s3/get-started/index.html) . El sistema adquiere datos de diversos sensores (como temperatura y humedad, luminocidad y humedad del suelo), los procesa y los envía a la nube mediante el protocolo MQTT para ser expuestos. En este caso he utilizado la plataforma [Adafruit IO](https://io.adafruit.com/) para graficar estos datos, proporcionando una visualización en tiempo real de las métricas como así también un historial. Ademas, con los datos procesados el sistema toma deciciones sobre actuadores (como luminaria, ventiladores o motores) para poder mantener las metricas dentro de los umbrales definidos. 
 
-Se utiliza FreeRTOS para la gestión de tareas en tiempo real y el ESP32 para la ejecución del código. La conectividad WiFi del ESP32 permite la comunicación eficiente de datos para su monitoreo y análisis.
+Se utiliza FreeRTOS para la gestión de tareas en tiempo real y el ESP32 para la ejecución del código. La conectividad WiFi del ESP32 permite la comunicación eficiente de datos para su monitoreo y análisis. En cuanto a los sensores, para medir humedad y temperatura se usó el sensor [DHT22](https://www.sparkfun.com/datasheets/Sensors/Temperature/DHT22.pdf), para medir la humedad del suelo se utilizó el sensor [YL-69](https://www.electronicoscaldas.com/datasheet/YL-69-HL-69.pdf) y para la luminocidad, a falta de sensor, se simuló con un potenciómetro. Para la implementación de los actuadores también se optó por simularlos, en este caso se usó un led de 7 segmentos en el cual un segmento representa la ventilación, otro la activación del sistema de riego y otro la iluminación.
 
 
 ## Objetivo
 Desarrollar un sistema IoT para el monitoreo y control de un vivero basado en el microcontrolador ESP32. Este sistema debe ser capaz de recolectar datos ambientales, procesarlos y enviarlos a un servidor remoto para su visualización y análisis. Ademas, debe ser capaz de controlar actuadores para mantener las variables dentro de los umbrales establecidos.
 ### Metas específicas
 * Implementar un sistema de adquisición de datos utilizando sensores de temperatura y humedad, luminocidad y humedad del suelo.
-* Procesar los datos adquiridos y enviarlos a un servidor remoto mediante MQTT.
+* Procesar los datos adquiridos y enviarlos a un servidor remoto mediante MQTT, como así también controlar actuadores.
 * Desarrollar un firmware para el ESP32 utilizando FreeRTOS para la gestión de tareas concurrentes.
-* Implementar una aplicación de visualización de datos utilizando Blynk.
+* Implementar una aplicación de visualización de datos utilizando Adafruit IO.
 
 ### Alcance
 El proyecto abarca desde la selección y configuración del hardware necesario (ESP32, sensores, actuadores) hasta el desarrollo del software con FreeRTOS y la implementación de la comunicación de datos con MQTT. Se considerarán aspectos críticos como la gestión energética, la confiabilidad de la transmisión de datos y la integración con plataformas de análisis y visualización de datos.
@@ -24,9 +24,9 @@ El proyecto está compuesto por varios archivos fuente y de encabezado que conti
 
 ## Requerimientos Funcionales
 
-- **Adquisición de Datos**: El sistema debe adquirir datos de temperatura y humedad cada 10 segundos utilizando los sensores correspondientes.
+- **Adquisición de Datos**: El sistema debe adquirir datos de temperatura y humedad, luminocidad y humedad del suelo cada 2 segundos utilizando los sensores correspondientes.
 - **Procesamiento de Datos**: El sistema debe ser capaz de controlar las diferentes variables a travez de actuadores.
-- **Envío de Datos**: Los datos adquiridos deben ser enviados a un servidor remoto mediante solicitudes HTTP POST.
+- **Envío de Datos**: Los datos adquiridos deben ser procesados (se promedian 5 muestras) y enviados a un servidor remoto cada 10 segundos.
 - **Gestión de Conectividad**: El sistema debe poder conectarse a una red WiFi y manejar la reconexión en caso de pérdida de conectividad.
 
 ## Requerimientos No Funcionales
@@ -54,6 +54,11 @@ Define la estructura de los datos y la estructura donde se almacenan las muestra
   - calculate_average`: Calcula el promedio de los datos proporcionados.
   - void process_sensor_data(SensorData_t *data): procesalos datos y los acomoda en la estructura definida. De esta manera se acomodan los datos para enviarlos a la nube.
 
+#### wifi.cpp y wifi.h
+- **Descripción**: Define las funciones necesarias para establecer la conexión a internet y en el caso de que se caiga la conexión se reconectará.
+- **Funciones Clave**:
+  - void wifi_init(void): establece y asegura la reconexión a internet.
+ 
 #### sensor.cpp y sensor.h
 - **Descripción**: Toma datos de los sensores del vivero, incluyendo la adquisición de datos de temperatura y humedad, luminocidad y humedad del suelo.
 - **Funciones Clave**:
@@ -70,9 +75,10 @@ Define la estructura de los datos y la estructura donde se almacenan las muestra
   - void CONFIG_Puertos()
 
 #### cloud.cpp y cloud.h
-- **Descripción**: Establece la conexion con la nube y envia los datos al boker
+- **Descripción**: Inicia el cliente MQTT y envia los datos al broker. Ademas dispone de una función para manejar los diferentes eventos entre el servidor y el cliente.
 - **Funciones Clave**:
-  - En desarrollo...
+  - void init_mqtt(void): Inicializa el cliente MQTT y alimenta al manejador de eventos.
+  - void send_to_cloud(SensorData_t *data): Envía los datos al broker.
  
 #### actuator.cpp y actuator.h
  - **Descripción**: Lleva a delante el accionar de los actuadores e indicadores en función de los umbrales
@@ -89,6 +95,7 @@ El proyecto depende de varias bibliotecas y componentes:
 - **DHT Library**: Biblioteca específica para sensores de temperatura y humedad, facilitando la adquisición de datos.
 - **MQTT Library**: Biblioteca para la implementación del protocolo MQTT, facilitando la comunicación de datos con el servidor remoto.
 
+![Captura desde 2024-06-17 13-05-56](https://github.com/Martinjosa/Control-Invernadero/assets/91288096/0d04c9a9-f118-41b5-9c03-651538fe3776)
 
 ![PINOUT_ESP32_V3](https://github.com/Martinjosa/Control-Invernadero/assets/91288096/24b1d0f1-0fab-4805-a832-23c58bca6684)
 
